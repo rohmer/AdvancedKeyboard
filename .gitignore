@@ -22,4 +22,5 @@
 /tools/CorpusCrawler/.cache/
 *.jar
 
-# Keep .advanced-keyboard-export.json: it records the source snapshot's hashes.
+# PROVENANCE/initial-creator-import.json retains historical import hashes.
+# Shared source changes are maintained and tested in this repository.

@@ -10,7 +10,7 @@ After collecting text, open **Trie generator** and click **Use collected corpora
 
 Fresh settings use **Compressed radix (NGTR v4) + Counts**, a 262,144-byte combined model/index budget and a 512 MiB RAM workspace shared by active workers. Saved explicit settings retain their behavior. Compatibility v3/v2 exports remain available with Counts scoring and historical NGTR-only byte caps. Radix budgets include the `.ngix` lookup index; keep it beside the `.ngtr` file when deploying. Additional sizes, such as `16384,262144`, reuse counting/training and create `<stem>-<bytes>.ngtr` siblings. Batch profiles are available only for radix, and disabled compatibility controls preserve their saved values.
 
-**Modified Kneser-Ney** is an explicit radix scoring option. It trains interpolated trigram probabilities and normalizes backoff after pruning. French validation showed some larger-profile next-word gains, alongside small-profile vocabulary/completion and correction costs. It adds training/metadata work and is not universally more accurate; benchmark the language and profile you intend to deploy. Counts stays the default. Creator's `Tests/Benchmarks/LanguageModels/README.md` describes the evaluation method.
+**Modified Kneser-Ney** is an explicit radix scoring option. It trains interpolated trigram probabilities and normalizes backoff after pruning. French validation showed some larger-profile next-word gains, alongside small-profile vocabulary/completion and correction costs. It adds training/metadata work and is not universally more accurate; benchmark the language and profile you intend to deploy. Counts stays the default. `tools/benchmarks/README.md` describes the evaluation method.
 
 The generation-engine label reports the available backend and full helper path. Put `UICreatorModelGen.exe` beside the application, build it under an ancestor's `tools/NativeTrieGenerator/bin`, or set `UICREATOR_MODELGEN` to its executable. The new GUI format/scoring, RAM and batch controls require a current native helper, which is checked for supported capabilities. Missing or outdated helpers produce a clear error. The managed C# CLI remains available for its original options; failed native runs do not silently start a second full generation. Progress and Stop remain connected to the UI. Temporary counts use local storage, and completed output files are replaced atomically individually; a batch/model-index pair is not one filesystem transaction.
 
@@ -23,9 +23,9 @@ Open `CorpusWorkbench.csproj` in Visual Studio with the **.NET desktop developme
 Build the solution from the workspace root on the command line with the .NET 8 Windows desktop SDK.
 
 ```powershell
-dotnet build Tools/CorpusWorkbench/CorpusWorkbench.csproj -c Release
+dotnet build tools/CorpusWorkbench/CorpusWorkbench.csproj -c Release
 ```
 
-In ESPOS, run `bin/Release/net8.0-windows/CorpusWorkbench.exe` in this project directory. The LVGL UI Creator mirror redirects build output to `build/corpus-tools/bin/CorpusWorkbench/Release/net8.0-windows`. Keep the output folder together so keyboard definitions, spelling data, any configured OpenNLP assets and runtime dependencies are available. The crawler and Wikipedia exporter use the existing [OpenNLP setup](../CorpusCrawler/README.md) only for their original six model-based profiles.
+Run `build/corpus-tools/bin/CorpusWorkbench/Release/net8.0-windows/CorpusWorkbench.exe` from this repository. Keep the output folder together so keyboard definitions, spelling data, any configured OpenNLP assets and runtime dependencies are available. The crawler and Wikipedia exporter use the existing [OpenNLP setup](../CorpusCrawler/README.md) only for their original six model-based profiles.
 
-The command above uses Creator's `Tools/`; substitute lowercase `tools/` when building from ESPOS. Build the native helper separately as described in the adjacent `NativeTrieGenerator/README.md` (under the same tools root), or use the helper bundled by a desktop build.
+Build the native helper separately as described in the adjacent `NativeTrieGenerator/README.md`, or use the helper bundled by a desktop build.

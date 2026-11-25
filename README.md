@@ -6,6 +6,19 @@ LVGL display, tick and input-device ports. Board drivers are outside this librar
 
 Repository: [rohmer/AdvancedKeyboard](https://github.com/rohmer/AdvancedKeyboard).
 
+## Maintenance
+
+This repository is the source of truth for the shared runtime, tools, layouts
+and language models. Make shared changes here, run the relevant tests, then
+commit and publish them. LVGL UI Creator and ESPOS consume a pinned Git checkout
+or submodule; update their dependency revision after validating the new commit.
+Keep application-specific UI and board adapters in their consumer repositories.
+Source copying, source-sync manifests and Creator export workflows are retired.
+
+`PROVENANCE/initial-creator-import.json` preserves the original import hashes.
+It is historical provenance and is not regenerated as this repository evolves.
+See [AGENTS.md](AGENTS.md) for the source layout and contributor checks.
+
 This repository includes the keyboard runtime, public headers,
 layout/model authoring tools, native model generator, Windows Corpus Workbench
 and simulator sources, tests, model catalog and notices. CMake builds the on-device
@@ -98,6 +111,6 @@ the board's flash capacity. Python runs at build time for this optional registry
 | `integrations/espos` | Optional ESPOS compatibility/partition adapters |
 
 See [component build instructions](BUILD.md), the original runtime notes under
-`src/README.md`, and the exported tool guides. License/provenance notices stay
+`src/README.md`, and the tool guides. License/provenance notices stay
 with the source, fonts, Unicode tables and models. See [NOTICE.md](NOTICE.md)
 for the preserved Creator, ESPOS and third-party ownership and license terms.

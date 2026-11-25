@@ -25,10 +25,11 @@ NGIX v2 indexes are generated deterministically from the model and validated
 against `indexBytes` and `indexSHA256`. Han character data may have a larger
 NGTR payload after conversion while using less combined storage.
 
-The editor stages these files under `language-models/bundled` beside its
-executable. Catalog enumeration reads only small compiled metadata; model bytes
-are loaded and validated when selected. Development builds can fall back to this
-source directory. There is no runtime dependency on `D:/Corpus`.
+Consumers can stage these files under `language-models/bundled` beside their
+executables. LVGL UI Creator reads the small `catalog.json`; model bytes are
+loaded and validated when selected. Development builds can read this directory
+from their pinned AdvancedKeyboard checkout. There is no runtime dependency on
+`D:/Corpus`.
 
 Choosing a bundled model imports its exact bytes through the normal project trie
 catalog, generates and retains an NGIX index, and deduplicates equal models.
@@ -51,17 +52,17 @@ same rebuild is a no-op. Existing v4 scored models are retained with a freshly
 validated canonical index. Conversion cannot recover unrecorded corpus counts
 or train probabilities from them.
 
-In LVGL UI Creator, reimport the original source files with the same latest
-encoding (build the converter first with `cmake -S Tools/RadixModel -B
-build/radix-convert -G Ninja -DCMAKE_BUILD_TYPE=Release`):
+To import the original sixteen source profiles, run the canonical importer from
+this repository's root after building the converter above:
 
-```powershell
-cmake --build build/radix-convert --parallel
-python UICreator/KeyboardModels/import_corpus.py D:/Corpus --converter build/radix-convert/UICreatorRadixConvert.exe
+```sh
+python tools/models/import_corpus.py /path/to/corpus --converter build/native-tools/RadixModel/UICreatorRadixConvert
 ```
 
 The importer validates and converts all sixteen sources before publishing any
-model, updates `CatalogData.inc`, and backs up changed outputs under `build`.
-It never changes the input files. Existing saved projects retain their embedded
+model, updates `models/bundled/catalog.json`, and backs up changed outputs under
+`build/keyboard-model-import`. It never changes the input files. No compiled
+Creator catalog is generated. Commit model/catalog changes here, then update
+consumer dependency pins. Existing saved projects retain their embedded
 legacy bytes and IDs; choosing a rebuilt catalog profile imports its new
 content-derived identity. The reserved `builtin-en-us` ID stays unchanged.

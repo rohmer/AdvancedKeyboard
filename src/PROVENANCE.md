@@ -20,9 +20,10 @@ ESPOS index generator. The C index builder and predictor lifetime facade are
 Creator integration code. Built-in model details and available source notices
 are retained under `models/`.
 
-The portable implementation, layouts and bundled corpus catalog are mirrored
-back to ESPOS using the manifest and compatibility adapters maintained in
-`Integrations/ESPOS` in the Creator checkout. `PredictionStorage.cpp` provides
+The initial Creator integration mirrored the implementation, layouts and model
+catalog into ESPOS through its sync manifest and compatibility adapters. That
+copy workflow is retired: shared maintenance now happens in AdvancedKeyboard,
+and consumers pin its published commits. `PredictionStorage.cpp` provides
 the shared PSRAM model/index cache to both graphical and headless ESPOS builds;
 it has no LVGL dependency. Board startup remains outside the portable component.
 
