@@ -54,3 +54,20 @@ Preserved notices include `NgramTrie/Wordlist/LICENSE.md`, native
 `KeyboardSimulator/PinyinData.LICENSE.txt`, generator `source/PROVENANCE.md`,
 and dependency licenses supplied by NuGet/OpenNLP. The English spelling/fuzzer
 workflow retains its original English and QWERTY assumptions.
+
+## Portable compatibility tools
+
+`KeyboardParity` exports managed correction/prefix/regression references and
+replays them against the native headless engine. Its C# project references the
+canonical `GBUTest`; its CMake project links the canonical prediction sources.
+Build directly with `cmake -S tools/KeyboardParity -B build/keyboard-parity`, or
+enable `ADVKBD_BUILD_KEYBOARD_PARITY=ON` in the tools build. See its README for
+the unchanged exporter arguments, native replay and input hash verification.
+
+`legacy/ngram_model.py` is the original ESPOS Python trainer, preserved byte for
+byte for existing CLI/import users. It retains NGTR v2 output and its original
+cache behavior; prefer the native generator for current radix models and large
+corpora. `models/pack_ngram_partition.py model.ngtr image.bin 0x20000` packs a
+validated NGTR v2/v3/v4 model and canonical index into an ESPOS-compatible NGPK1
+partition image. ESPOS compatibility entrypoints resolve these tools through
+the pinned dependency rather than maintaining copies.

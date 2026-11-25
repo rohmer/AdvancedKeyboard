@@ -128,3 +128,7 @@ endif()
 add_test(NAME AdvancedKeyboardBenchmarkTools COMMAND "${Python3_EXECUTABLE}" -m unittest discover
     -s "${advanced_keyboard_root}/tools/benchmarks" -p test_benchmark.py -v)
 set_tests_properties(AdvancedKeyboardBenchmarkTools PROPERTIES TIMEOUT 60 LABELS "benchmark;unit")
+
+add_test(NAME AdvancedKeyboardPortableTools COMMAND "${Python3_EXECUTABLE}" -m unittest discover
+    -s "${CMAKE_CURRENT_LIST_DIR}/python" -p test_legacy_tools.py -v)
+set_tests_properties(AdvancedKeyboardPortableTools PROPERTIES TIMEOUT 60 LABELS "tools;legacy;partition")

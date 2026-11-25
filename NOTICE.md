@@ -8,6 +8,10 @@ does not replace the terms of imported assets or grant new rights to inputs.
   user's ESPOS project. `src/PROVENANCE.md` records that history and the absence
   of a separately supplied project-wide ESPOS license. Ownership remains as
   stated in those sources; this extraction does not relicense them.
+- Additional ESPOS parity/export, legacy Python training and NGPK packing tools
+  retain the same original ownership. `PROVENANCE/espos-portable-tools.json`
+  records exact source hashes and the small build/format adaptations. No settings,
+  corpora or separately supplied ESPOS-wide source license were included.
 - Keyboard glyph fonts retain their adjacent `src/Keyboard*Font.LICENSE.txt`
   notices, including Bitstream/DejaVu/Arev and SIL Open Font License terms.
 - Pinyin data retains `src/PinyinData.LICENSE.txt`; the English model and

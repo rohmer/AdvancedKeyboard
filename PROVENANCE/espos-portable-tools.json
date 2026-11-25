@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "origin": "User-owned ESPOS source, imported after source review; no settings, corpora, binaries or private paths included. Existing ownership is retained; no separately supplied ESPOS-wide license.",
+  "files": [
+    {
+      "source": "tools/KeyboardParity/Program.cs",
+      "target": "tools/KeyboardParity/Program.cs",
+      "sha256": "1aec41d020aba4140e6469137fafa3e2154d26ec6359e3c78281a6cd6488f36f",
+      "bytes": 13243
+    },
+    {
+      "source": "tools/KeyboardParity/KeyboardParity.csproj",
+      "target": "tools/KeyboardParity/KeyboardParity.csproj",
+      "sha256": "fce774f33b60323d0619e8f8f10fdc00f405afd986e2f9e88f40e97a15cca70d",
+      "bytes": 335
+    },
+    {
+      "source": "tools/KeyboardParity/host_parity.cpp",
+      "target": "tools/KeyboardParity/host_parity.cpp",
+      "sha256": "a6e45013c8e514be11a6778d842e4c4ad6c25c9c1f473e53d7e86d235682a383",
+      "bytes": 12121
+    },
+    {
+      "source": "tools/python/ngram_model.py",
+      "target": "tools/legacy/ngram_model.py",
+      "sha256": "4803d48b2e7d12a3e0e320b609580bcd0862d9b82edd4a7a39e67c341c456b7a",
+      "bytes": 15157
+    }
+  ],
+  "adaptations": {
+    "tools/KeyboardParity/host_parity.cpp": "Use loaded Model.FormatVersion() rather than hardcoded v3 metadata; scoring and replay logic unchanged.",
+    "tools/models/pack_ngram_partition.py": "Retains three positional arguments, NGPK1 layout and 64KiB model cap; canonical v2/v3/v4 index helper plus output/input alias and atomic publication guards.",
+    "tools/KeyboardParity/Program.cs": "Pass the current Predict API optional language argument as null (same default semantics); exporter/scoring logic unchanged."
+  }
+}
