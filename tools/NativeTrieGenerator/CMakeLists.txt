@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.24)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    project(NativeTrieGenerator LANGUAGES CXX)
+endif()
+if(NOT TARGET AdvancedKeyboard::ModelCodec)
+    add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ModelCodec" "${CMAKE_CURRENT_BINARY_DIR}/model-codec")
+endif()
+add_subdirectory(source native)

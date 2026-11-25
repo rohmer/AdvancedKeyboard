@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <AdvancedKeyboardRepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..'))</AdvancedKeyboardRepositoryRoot>
+    <AdvancedKeyboardLayoutDirectory>$(MSBuildThisFileDirectory)layout</AdvancedKeyboardLayoutDirectory>
+    <BaseOutputPath>$(AdvancedKeyboardRepositoryRoot)\build\corpus-tools\bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(AdvancedKeyboardRepositoryRoot)\build\corpus-tools\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)\bin\**;$(MSBuildProjectDirectory)\obj\**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

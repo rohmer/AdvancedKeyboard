@@ -1,0 +1,5 @@
+version: "0.1.0"
+description: "Portable LVGL 9.6 Advanced Keyboard and optional compressed NGTR prediction"
+license: "MIT"
+dependencies:
+  idf: ">=5.2"

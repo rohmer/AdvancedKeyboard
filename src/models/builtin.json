@@ -1,0 +1,21 @@
+{
+  "id": "builtin-en-us",
+  "language": "en-US",
+  "name": "Built-in English",
+  "sizeKiB": 16,
+  "filename": "enUS16.ngtr",
+  "sourceName": "ESPOS Trie/enUS16.ngtr",
+  "sourceFormatVersion": 3,
+  "sourceBytes": 16384,
+  "sourceSHA256": "ddff8e652ca7177e79e8e661e68a62b9edc2ddcaaea62f1af993bf423926b6fc",
+  "sourceNodeCount": 5691,
+  "formatVersion": 4,
+  "indexVersion": 2,
+  "bytes": 14888,
+  "indexBytes": 3476,
+  "sha256": "1b056647ea6c66460545ca0a3ccbd68ece85a44680c611e17ad10f73d4a0b75a",
+  "indexSHA256": "dd4b5a9c40ec0f1b7b4f8299d293ef21b2025e21f835457c2cb043ec1ea56d32",
+  "nodeCount": 5691,
+  "physicalNodeCount": 2096,
+  "projectTrieId": "builtin-en-us"
+}

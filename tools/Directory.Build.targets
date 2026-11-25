@@ -1,0 +1,13 @@
+<Project>
+  <!-- Preserve shared project files while replacing their original host asset path. -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'KeyboardSimulator'">
+    <Content Remove="../../LVSerial/Widgets/AdvancedKeyboard/layout/*.json" />
+    <Content Include="$(AdvancedKeyboardLayoutDirectory)/*.json" Link="Keyboards/%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="ValidateAdvancedKeyboardLayouts" BeforeTargets="PrepareForBuild"
+          Condition="'$(MSBuildProjectName)' == 'KeyboardSimulator'">
+    <Error Condition="!Exists('$(AdvancedKeyboardLayoutDirectory)/en-US-qwerty.json')"
+           Text="The standalone tools/layout keyboard definitions are missing." />
+  </Target>
+</Project>

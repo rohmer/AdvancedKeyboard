@@ -1,0 +1,7 @@
+if(NOT TARGET AdvancedKeyboard::AdvancedKeyboard)
+    message(FATAL_ERROR "The Basic example needs ADVKBD_BUILD_WIDGET=ON and a configured LVGL target")
+endif()
+add_library(advanced_keyboard_example STATIC main.c)
+target_compile_features(advanced_keyboard_example PRIVATE c_std_99)
+target_include_directories(advanced_keyboard_example PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(advanced_keyboard_example PUBLIC AdvancedKeyboard::AdvancedKeyboard)

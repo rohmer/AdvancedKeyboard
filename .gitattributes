@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.ngtr binary
+*.ngix binary
+*.ttf binary
+*.otf binary
+*.png binary
+*.jpg binary
+*.ico binary

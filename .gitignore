@@ -1,0 +1,25 @@
+# Build trees, compiler products and local IDE state.
+/build/
+**/bin/
+**/obj/
+**/__pycache__/
+/.vs/
+/.idea/
+/.vscode/
+*.user
+*.suo
+*.pdb
+*.pyc
+*.log
+*.tmp
+/.DS_Store
+
+# External data and downloaded tool dependencies belong outside source control.
+/corpora/
+/datasets/
+/tools/CorpusCrawler/OpenNlp/dependencies/
+/tools/CorpusCrawler/OpenNlp/java-home.txt
+/tools/CorpusCrawler/.cache/
+*.jar
+
+# Keep .advanced-keyboard-export.json: it records the source snapshot's hashes.
