@@ -22,6 +22,7 @@ internal sealed class SimulatorForm : Form
     private readonly ComboBox orientation = NewSelector();
     private readonly ComboBox keyboard = NewSelector();
     private readonly ComboBox resolution = NewSelector();
+    private readonly CheckBox numeric = new() { Text = "Numeric", ForeColor = Caption, AutoSize = true, AccessibleName = "Numeric keyboard" };
     private readonly CheckBox rtl = new() { Text = "RTL", ForeColor = Caption, AutoSize = true, AccessibleName = "Right-to-left display and typing" };
     private readonly NumericUpDown autocorrectThreshold = new()
     {
@@ -87,12 +88,25 @@ internal sealed class SimulatorForm : Form
         AddSelector("Panel resolution", resolution, 2);
         AddSelector("Autocorrect threshold", autocorrectThreshold, 3);
         autocorrectThreshold.ValueChanged += (_, _) => preview.AutocorrectThreshold = autocorrectThreshold.Value;
+        var inputOptions = new FlowLayoutPanel
+        {
+            AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            WrapContents = false, Anchor = AnchorStyles.Top | AnchorStyles.Left, Margin = new(0),
+        };
+        inputOptions.Controls.AddRange([numeric, rtl]);
+        toolbar.Controls.Add(inputOptions, 4, 0);
         var trieActions = new FlowLayoutPanel
         {
             AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink,
             WrapContents = false, Anchor = AnchorStyles.Top, Margin = new(0),
         };
-        trieActions.Controls.AddRange([rtl, loadTrie, viewTrie]);
+        trieActions.Controls.AddRange([loadTrie, viewTrie]);
+        numeric.CheckedChanged += (_, _) =>
+        {
+            preview.NumericInput = numeric.Checked;
+            UpdateInputControls();
+            UpdateStatus();
+        };
         rtl.CheckedChanged += (_, _) => preview.RightToLeftTyping = rtl.Checked;
         toolbar.Controls.Add(trieActions, 4, 1);
         loadTrie.Click += async (_, _) =>
@@ -186,8 +200,16 @@ internal sealed class SimulatorForm : Form
     private void UpdateStatus()
     {
         var size = preview.DisplaySize;
-        status.Text = $"{size.Width} × {size.Height} px   ·   {trieStatus}" +
+        status.Text = $"{size.Width} × {size.Height} px   ·   " +
+                      (numeric.Checked ? "Numeric: 0–9 and one decimal point" : trieStatus) +
                       (profileWarning is null ? "" : $"   ·   {profileWarning}");
+    }
+
+    private void UpdateInputControls()
+    {
+        keyboard.Enabled = !numeric.Checked && definitions.Count > 0;
+        autocorrectThreshold.Enabled = !numeric.Checked;
+        loadTrie.Enabled = !numeric.Checked && !IsRunning;
     }
 
     private async Task LoadTrieFileAsync(string path)
@@ -221,7 +243,7 @@ internal sealed class SimulatorForm : Form
             if (!IsDisposed)
             {
                 if (cancellation.IsCancellationRequested) trieStatus = previousStatus;
-                loadTrie.Enabled = true;
+                UpdateInputControls();
                 UpdateStatus();
             }
         }

@@ -85,6 +85,7 @@ internal static class RadixChecks
         Put(combined, "alphabet zebra", 4);
         byte[] raw = Encode(combined, unigrams);
         var countModel = TrieModel.Parse(raw);
+        NumericChecks.WithTrie(countModel, profiles);
         Check(countModel.Version == 4 && !countModel.HasLanguageScores && countModel.PhysicalNodeCount < countModel.NodeCount / 4,
             "Radix spans expanded into physical byte nodes");
         Check(countModel.StorageBytes < countModel.NodeCount * 12, "Radix reader retained a dense byte-node graph");

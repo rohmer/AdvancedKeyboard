@@ -91,6 +91,7 @@ internal static class Program
             if (nativeOption >= 0 && nativeOption + 1 == args.Length) throw new ArgumentException("--native requires the model generator executable path.");
             int policyOption = Array.IndexOf(args, "--policy-probe");
             if (policyOption >= 0 && policyOption + 1 == args.Length) throw new ArgumentException("--policy-probe requires the native radix regression executable path.");
+            NumericChecks.Run(profiles);
             RadixChecks.Run(profiles, nativeOption < 0 ? null : args[nativeOption + 1], policyOption < 0 ? null : args[policyOption + 1]);
             Console.WriteLine("Seven language layouts, canonical script input, RTL toggling, Pinyin commit/backspace and Hindi vowel ordering passed.");
             return 0;

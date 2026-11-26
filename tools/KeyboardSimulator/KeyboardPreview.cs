@@ -14,9 +14,9 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
     private static readonly Color KeyboardColor = Color.FromArgb(215, 224, 237);
     private static readonly Color Ink = Color.FromArgb(30, 44, 65);
     private static readonly Color Accent = Color.FromArgb(44, 94, 177);
-    private readonly TextBox editor = new()
+    private readonly PreviewTextBox editor = new()
     {
-        Multiline = true, AcceptsReturn = true, BorderStyle = BorderStyle.None,
+        Multiline = true, AcceptsReturn = true, AutoSize = false, BorderStyle = BorderStyle.None,
         ScrollBars = ScrollBars.Vertical, HideSelection = false,
         BackColor = ScreenColor, ForeColor = Ink, AccessibleName = "Preview text",
     };
@@ -47,6 +47,8 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
     private Form? popupForm;
     private bool filteringPopupMessages;
     private KeyboardModel? model;
+    private KeyboardDefinition? textKeyboard;
+    private bool numericInput;
     private string? pendingKey;
     private Size displaySize = new(1024, 600);
     private Rectangle screen;
@@ -66,7 +68,17 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
     private int candidatePage, compositionCaret, compositionSelectionLength;
     private string? fontLanguage;
     private bool rightToLeftTyping;
-    private bool Chinese => language == "zh";
+    private bool Chinese => !numericInput && language == "zh";
+    public bool NumericInput
+    {
+        get => numericInput;
+        set
+        {
+            if (numericInput == value) return;
+            numericInput = value;
+            ConfigureKeyboard();
+        }
+    }
     public bool RightToLeftTyping
     {
         get => rightToLeftTyping;
@@ -155,19 +167,30 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
     public void SetKeyboard(KeyboardDefinition definition)
     {
+        textKeyboard = definition;
+        language = definition.Id.Split('-', 2)[0].ToLowerInvariant();
+        RightToLeftTyping = language is "ar" or "ur";
+        ConfigureKeyboard();
+    }
+
+    private void ConfigureKeyboard()
+    {
         CancelVariantInteraction();
         SuspendLayout();
         try {
         tapTimer.Stop();
         pendingKey = null;
         pinyin.Clear(); candidatePage = 0;
-        model = new KeyboardModel(definition);
-        keyboard = new KeyboardNeighborMap(definition);
-        language = definition.Id.Split('-', 2)[0].ToLowerInvariant();
-        RightToLeftTyping = language is "ar" or "ur";
+        var definition = numericInput ? NumericKeyboard.Definition : textKeyboard;
+        model = definition is null ? null : new KeyboardModel(definition);
+        keyboard = numericInput || definition is null ? null : new KeyboardNeighborMap(definition);
+        editor.NumericOnly = numericInput;
+        editor.Multiline = !numericInput;
+        editor.AcceptsReturn = !numericInput;
         preedit.Visible = previousCandidates.Visible = nextCandidates.Visible = Chinese;
-        RefreshKeys();
-        suggestionBar.Visible = true;
+        if (model is not null) RefreshKeys();
+        else foreach (var button in buttons) button.Visible = false;
+        suggestionBar.Visible = !numericInput && model is not null;
         QueueSuggestions();
         PerformLayout();
         } finally { ResumeLayout(performLayout: true); }
@@ -197,6 +220,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
         search = null;
         visibleSuggestions = null;
         SetSuggestions([]);
+        if (numericInput) return;
         if (pinyin.Spelling.Length > 0 && (editor.SelectionStart != compositionCaret || editor.SelectionLength != compositionSelectionLength)) { pinyin.Clear(); candidatePage = 0; }
         if (Chinese) { ShowPinyin(); if (pinyin.Spelling.Length > 0) return; }
         if (trie is not null && model is not null) suggestionTimer.Start();
@@ -205,7 +229,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
     private async void RefreshSuggestions(object? sender, EventArgs args)
     {
         suggestionTimer.Stop();
-        if (trie is not { } definition) return;
+        if (numericInput || trie is not { } definition) return;
         string? selectedLanguage = language;
         var input = SuggestionText.Capture(editor.Text, editor.SelectionStart, editor.SelectionLength, selectedLanguage);
         var neighborMap = keyboard;
@@ -215,7 +239,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
         {
             var words = await Task.Run(() => TrieSuggestions.Predict(definition, input.Context, input.Prefix,
                 cancellation.Token, neighborMap, selectedLanguage), cancellation.Token);
-            if (search != cancellation || IsDisposed) return;
+            if (search != cancellation || IsDisposed || numericInput) return;
             if (!MatchesEditor(input)) { QueueSuggestions(); return; }
             SetSuggestions(words);
             visibleSuggestions = input;
@@ -229,6 +253,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
     private void ApplySuggestion(string word)
     {
+        if (numericInput) return;
         CancelVariantInteraction();
         if (Chinese && pinyin.Spelling.Length > 0) { CommitPinyin(word); return; }
         if (word.Length == 0 || visibleSuggestions is not { } input) return;
@@ -271,7 +296,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
                     button.AccessibleName = key.Action.Kind switch
                     {
                         KeyboardActionKind.Shift => locked ? "Shift locked" : "Shift",
-                        KeyboardActionKind.Backspace => "Backspace",
+                        KeyboardActionKind.Backspace => numericInput ? "Delete" : "Backspace",
                         KeyboardActionKind.Enter => "Enter",
                         _ => key.Label,
                     };
@@ -648,7 +673,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
     private void CompleteTypedWord(object? sender, KeyPressEventArgs e)
     {
-        if (e.Handled) return;
+        if (e.Handled || numericInput) return;
         if (HandlePinyin(e.KeyChar.ToString(), backspace: e.KeyChar == '\b', enter: e.KeyChar == '\r')) { e.Handled = true; return; }
         if (e.KeyChar == '\r') e.Handled = TryCompleteWord(Environment.NewLine);
         else if (!char.IsControl(e.KeyChar)) e.Handled = TryCompleteWord(e.KeyChar.ToString());
@@ -656,6 +681,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
     private void InsertText(string text)
     {
+        if (numericInput) { editor.InsertNumericText(text); return; }
         if (HandlePinyin(text)) return;
         if (!TryCompleteWord(text)) editor.SelectedText = text;
     }
@@ -695,7 +721,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
     private bool TryCompleteWord(string delimiter)
     {
-        if (trie is not { } definition || keyboard is not { } neighbors || editor.SelectionLength != 0 ||
+        if (numericInput || trie is not { } definition || keyboard is not { } neighbors || editor.SelectionLength != 0 ||
             delimiter.Length == 0 || !delimiter.EnumerateRunes().All(IsWordDelimiter)) return false;
 
         var input = SuggestionText.Capture(editor.Text, editor.SelectionStart, selectionLength: 0, language: language);
@@ -775,7 +801,7 @@ internal sealed class KeyboardPreview : Control, IMessageFilter
 
         float keyboardHeight = model is null ? 0 : Math.Min(DisplaySize.Height * .46f, DisplaySize.Width * .45f);
         float keyboardTop = DisplaySize.Height - keyboardHeight;
-        float suggestionHeight = model is null ? 0 : 46;
+        float suggestionHeight = model is null || numericInput ? 0 : 46;
         float suggestionTop = keyboardTop - suggestionHeight;
         keyArea = BoundsInScreen(0, keyboardTop, DisplaySize.Width, keyboardHeight);
         editor.Bounds = BoundsInScreen(20, 20, DisplaySize.Width - 40, suggestionTop - 40);

@@ -12,6 +12,12 @@ checkout is required. Arabic/Urdu support RTL display; Hindi/Bengali use InScrip
 Russian uses JCUKEN, Indonesian uses QWERTY, and Mandarin supports shared Pinyin
 character composition. Pinyin's dictionary notice is `PinyinData.LICENSE.txt`.
 
+Enable **Numeric** in the toolbar to simulate the device's 4×3 numeric keypad:
+`1 2 3 / 4 5 6 / 7 8 9 / . 0 delete`. It accepts ASCII digits and one decimal
+point, including when typing or pasting into the preview. Deleting and replacing
+selected text work normally. Suggestions, autocorrect and Pinyin are paused in
+numeric mode; turn Numeric off to return to the selected language and loaded trie.
+
 Load legacy NGTR v2, compact v3 or compressed radix v4 models. A matching radix
 index is validated when present. Counts and optional smoothed scores use the
 same semantics as the portable runtime. Automatic corrections preserve exact
